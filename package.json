@@ -1,7 +1,7 @@
 {
-  "name": "bot",
-  "version": "1.0.0",
-  "description": "",
+  "name": "studservis-bot",
+  "version": "0.9.0",
+  "description": "Studservis Bot for create orders",
   "type": "module",
   "main": "index.js",
   "scripts": {
