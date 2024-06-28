@@ -4,6 +4,7 @@ import Calendar from 'telegram-inline-calendar/src/Calendar.js';
 import { apiClient } from './api.js';
 import { message } from 'telegraf/filters';
 import fetch from 'node-fetch';
+import md5 from 'js-md5';
 
 dotenv.config();
 
@@ -51,6 +52,23 @@ const requestOrderNumberKeyboard = {
   },
 };
 
+const makeRequestToCrm = async (method) => {
+
+  let data = {
+    action: 'StudBotApi',
+    method: method,
+  };
+
+  data.token = md5(`${API_TOKEN}${md5(JSON.stringify(data))}`);
+
+  let response = await fetch(`${SECOND_API_URL}`, {
+    header: { "Content-Type": "application/json", },
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+  return await response.json();
+};
+
 // const requestLocationKeyboard = {
 //   reply_markup: {
 //     one_time_keyboard: true,
@@ -81,6 +99,11 @@ let currentYear = date.getFullYear();
 let currentDate = `${currentYear}-${currentMonth}-${currentDay}`;
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
+const API_URL = process.env.API_URL;
+const SECOND_API_URL = process.env.SECOND_API_URL;
+const API_TOKEN = process.env.API_TOKEN;
+
+let TYPES_OF_WORK = [];
 
 const calendar = new Calendar(bot, {
   date_format: 'DD-MM-YYYY',
@@ -102,80 +125,6 @@ const calendar = new Calendar(bot, {
   console.log(data);
   return data;
 }); */
-
-bot.command('start', (ctx) => {
-  if (
-    ctx.message.text.split(' ')[ctx.message.text.split(' ').length - 1] !==
-    '/start'
-  ) {
-    activeFrom = fromTypes.catBot;
-  }
-
-  if (activeFrom === 'catBot') {
-    bot.telegram.sendMessage(
-      ctx.chat.id,
-      `Ваш заказ ${ctx.message.text.split(' ')[ctx.message.text.split(' ').length - 1]
-      } успешно создан, если у вас есть вопросы, задайте их`,
-      {}
-    );
-    bot.telegram.sendMessage(
-      ctx.chat.id,
-      `Есть ли у вас какие-нибудь вопросы к нам?`,
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: 'Хочу собаку!',
-                callback_data: 'dog',
-              },
-              {
-                text: 'Хочу кота!',
-                callback_data: 'cat',
-              },
-            ],
-          ],
-        },
-      }
-    );
-  } else {
-    ctx.reply(
-      `Здравствуйте ${ctx.message.from.username}, меня зовут Студень. Это бот компании Студсервис. Здесь вы можете:`,
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: 'Узнать статус вашего заказа', callback_data: '/state' }],
-            [
-              {
-                text: 'Создать заказ',
-                callback_data: '/create',
-              },
-            ],
-            [{ text: 'Cвязаться с менеджером', callback_data: '/manager' }],
-          ],
-        },
-      }
-    );
-    /* setTimeout(() =>
-      bot.telegram.sendMessage(ctx.chat.id, `Хотите посмотреть на ужасы бренного мира??!!`, {
-        reply_markup: {
-          inline_keyboard: [
-            [{
-              text: "Да хочу! Присылайте!",
-              callback_data: 'photo'
-            },
-            {
-              text: "Не хочу, но присылайте вашу гомосятину...",
-              callback_data: 'photo'
-            }
-            ],
-
-          ]
-        }
-      }), 1000); */
-  }
-});
-
 
 bot.action('start', (ctx) => {
   if (
@@ -603,25 +552,6 @@ const regexEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const createOrderDataWizard = new Scenes.WizardScene(
   'CREATE_ORDER_SCENE',
   (ctx) => {
-    ctx.reply('Какой тип работы вам необходим?', {
-      reply_markup: {
-
-        one_time_keyboard: true,
-        keyboard: [
-          [
-            { text: 'Курсовая работа' },
-            { text: 'Дипломная работа' },
-            { text: 'Доклад' },
-          ],
-          [
-            { text: 'Эссе' },
-            { text: 'Реферат' },
-            { text: 'Отчет по практике' }
-          ],
-        ],
-      },
-    });
-
     ctx.wizard.state.createOrderData = {
       type_of_work: null,
       theme: null,
@@ -633,7 +563,20 @@ const createOrderDataWizard = new Scenes.WizardScene(
       date: null
     };
 
-    return ctx.wizard.next();
+    makeRequestToCrm('getTypesOfWork').then((data) => {
+      if (data && data.list) {
+        TYPES_OF_WORK = data.list;
+        ctx.reply('Какой тип работы вам необходим?', {
+          reply_markup: {
+            one_time_keyboard: true,
+            keyboard: TYPES_OF_WORK.map((item) => [{ text: item.name }]),
+          },
+        });
+
+        return ctx.wizard.next();
+      }
+    });
+
   },
   (ctx) => {
     if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT[ctx.callbackQuery.data]) {
@@ -643,18 +586,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
         ctx.reply('Неверный тип работы (по секрету: для проверки сделали только Курсовые. Лучше выберите их)', {
           reply_markup: {
             one_time_keyboard: true,
-            keyboard: [
-              [
-                { text: 'Курсовая работа' },
-                { text: 'Дипломная работа' },
-                { text: 'Доклад' },
-              ],
-              [
-                { text: 'Эссе' },
-                { text: 'Реферат' },
-                { text: 'Отчет по практике' }
-              ],
-            ],
+            keyboard: TYPES_OF_WORK.map((item) => [{ text: item.name }]),
           },
         });
       } else {
