@@ -1,4 +1,4 @@
-import { regexEmail, getRndInteger } from "../utils.js";
+import { regexEmail, getRndInteger } from "../utils";
 
 const orderFirstStep = (ctx: any) => {
   ctx.reply('Для авторизации введите ваш email (любой, пока нет авторизации)');

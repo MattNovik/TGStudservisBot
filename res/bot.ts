@@ -1,10 +1,10 @@
 
 import { Scenes, session } from 'telegraf';
-import { helpCommand, startCommand, managerCommand, nextCommand } from './functions/commandFunction.js';
-import { FROM_TYPES } from './data.js';
-import BOT from './initBot.js';
-import createOrderDataWizard from './Scenes/CreateOrderDataScene.js';
-import orderDataWizard from './Scenes/OrderDataScene.js';
+import { helpCommand, startCommand, managerCommand, nextCommand } from './functions/commandFunction';
+import { FROM_TYPES } from './data';
+import BOT from './initBot';
+import createOrderDataWizard from './Scenes/CreateOrderDataScene';
+import orderDataWizard from './Scenes/OrderDataScene';
 
 let activeFrom: any;
 let helpState: number = 1;
@@ -120,11 +120,31 @@ if (BOT) {
     );
   });
 
-  orderDataWizard.action('/create', (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE'));
-  createOrderDataWizard.action('/state', (ctx: any) => ctx.scene.enter('CREATE_ORDER_SCENE'));
+  orderDataWizard.action('/create', (ctx: any) => {
+    if (ctx.scene) {
+      ctx.scene.leave();
+    }
+    ctx.scene.enter('ORDER_ID_SCENE');
+  });
+  createOrderDataWizard.action('/state', (ctx: any) => {
+    if (ctx.scene) {
+      ctx.scene.leave();
+    }
+    ctx.scene.enter('CREATE_ORDER_SCENE')
+  });
 
-  orderDataWizard.command('/create', (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE'));
-  createOrderDataWizard.command('/state', (ctx: any) => ctx.scene.enter('CREATE_ORDER_SCENE'));
+  orderDataWizard.command('/create', (ctx: any) => {
+    if (ctx.scene) {
+      ctx.scene.leave();
+    }
+    ctx.scene.enter('ORDER_ID_SCENE');
+  });
+  createOrderDataWizard.command('/state', (ctx: any) => {
+    if (ctx.scene) {
+      ctx.scene.leave();
+    }
+    ctx.scene.enter('CREATE_ORDER_SCENE')
+  });
 
   const stage = new Scenes.Stage([orderDataWizard, createOrderDataWizard]);
 
@@ -134,17 +154,17 @@ if (BOT) {
   BOT.action('/state', (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE'));
   BOT.command('/state', (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE'));
 
-  stage.command('/state', (ctx: any) => ctx.scene.leave());
-  stage.action('/state', (ctx: any) => ctx.scene.leave());
-
-  stage.command('/create', (ctx: any) => ctx.scene.leave());
-  stage.action('/create', (ctx: any) => ctx.scene.leave());
-
-  stage.command('/start', (ctx: any) => ctx.scene.leave());
-  stage.action('/start', (ctx: any) => ctx.scene.leave());
-
-  stage.command('/manager', (ctx: any) => ctx.scene.leave());
-  stage.action('/manager', (ctx: any) => ctx.scene.leave());
+  /*   stage.command('/state', (ctx: any) => ctx.scene.leave());
+    stage.action('/state', (ctx: any) => ctx.scene.leave());
+  
+    stage.command('/create', (ctx: any) => ctx.scene.leave());
+    stage.action('/create', (ctx: any) => ctx.scene.leave());
+  
+    stage.command('/start', (ctx: any) => ctx.scene.leave());
+    stage.action('/start', (ctx: any) => ctx.scene.leave());
+  
+    stage.command('/manager', (ctx: any) => ctx.scene.leave());
+    stage.action('/manager', (ctx: any) => ctx.scene.leave()); */
 
   BOT.action('/create', (ctx: any) => {
     console.log('create');

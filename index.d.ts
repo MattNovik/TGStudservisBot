@@ -1,1 +1,1 @@
-declare module 'telegram-inline-calendar/src/Calendar.js';
+declare module 'telegram-inline-calendar/src/Calendar'; 

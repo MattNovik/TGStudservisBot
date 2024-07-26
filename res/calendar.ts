@@ -1,5 +1,5 @@
-import Calendar from "telegram-inline-calendar/src/Calendar.js";
-import BOT from "./initBot.js";
+import Calendar from "telegram-inline-calendar/src/Calendar";
+import BOT from "./initBot";
 
 const date = new Date();
 
@@ -13,7 +13,7 @@ let currentYear = date.getFullYear();
 
 let currentDate = `${currentYear}-${currentMonth}-${currentDay}`;
 
-const DateCalendar = new Calendar(BOT, {
+const DateCalendar: any = new Calendar(BOT, {
   date_format: 'DD-MM-YYYY',
   language: 'ru',
   bot_api: 'telegraf',

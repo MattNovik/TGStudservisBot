@@ -1,4 +1,4 @@
-import { orderFirstStep, orderSecondStep, orderThirdStep } from "../functions/scenesSteps.js";
+import { orderFirstStep, orderSecondStep, orderThirdStep } from "../functions/scenesSteps";
 import { Scenes } from "telegraf";
 
 const orderDataWizard = new Scenes.WizardScene(

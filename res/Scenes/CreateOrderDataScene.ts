@@ -1,8 +1,8 @@
 import { Scenes } from "telegraf";
-import { makeRequestToCrm } from "../api.js";
-import { ACTION_SCENE_OUT } from "../data.js";
-import { regexEmail } from "../utils.js";
-import DateCalendar from "../calendar.js";
+import { makeRequestToCrm } from "../api";
+import { ACTION_SCENE_OUT } from "../data";
+import { regexEmail } from "../utils";
+import DateCalendar from "../calendar";
 
 let TYPES_OF_WORK: any = [];
 

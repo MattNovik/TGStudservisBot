@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+
 import { md5 } from 'js-md5';
 
 const API_URL = process.env.API_URL;
