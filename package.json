@@ -6,8 +6,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node bot.js",
-    "start:pm2": "pm2 start bot.js -i max"
+    "start": "node ./res/bot.ts",
+    "build": "rimraf ./dist && tsc",
+    "start:dev": "pm2-runtime ./res/bot.ts --watch",
+    "start:prod": "npm run build && pm2-runtime ecosystem.config.cjs"
   },
   "keywords": [],
   "author": "",
@@ -17,10 +19,14 @@
     "dotenv": "^16.0.3",
     "js-md5": "^0.8.3",
     "node-fetch": "^3.3.2",
+    "pm2": "^5.4.2",
     "telegraf": "^4.11.2",
-    "telegram-inline-calendar": "^1.6.4"
+    "telegram-inline-calendar": "^1.7.0"
   },
   "devDependencies": {
-    "pm2": "^5.3.0"
+    "@telegraf/types": "^7.1.0",
+    "@types/node": "^20.14.12",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.4"
   }
 }

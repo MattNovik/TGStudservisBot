@@ -1,15 +1,15 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 
 COPY package*.json ./
-RUN addgroup app && adduser -S -G node app
-USER node
 
 RUN npm install
-COPY --chown=node:node . .
+RUN npm install -g pm2
+RUN npm install -D typescript
+ENV PM2_PUBLIC_KEY=2p0cfdtozgnpfh2
+ENV PM2_SECRET_KEY=z3nhdf5bpz9o86o
 
-EXPOSE 8080
+COPY . .
 
-CMD [ "node", "app.js" ]
+CMD ["npm", "run", "start:prod"]
