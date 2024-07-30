@@ -37,7 +37,7 @@ const orderThirdStep = (ctx: any) => {
         })
           .then((response: any) => response.json())
           .then((data: any) => {
-            let result = data.orders[getRndInteger(0, data.orders.length - 1)];
+            const result = data.orders[getRndInteger(0, data.orders.length - 1)];
             console.log(JSON.stringify(data));
             console.log(result)
             ctx.reply(

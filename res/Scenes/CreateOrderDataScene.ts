@@ -4,11 +4,30 @@ import { ACTION_SCENE_OUT } from "../data";
 import { regexEmail } from "../utils";
 import DateCalendar from "../calendar";
 
+interface ORDER_DATA {
+  type_of_work: null | string | number,
+  theme: null | string,
+  course: null | string | number,
+  email: null | string,
+  phone: null | string | number,
+  name: null | string,
+  pages: null | string | number,
+  date: null | string | number | Date
+}
+
 let TYPES_OF_WORK: any = [];
 
 const createOrderDataWizard = new Scenes.WizardScene(
   'CREATE_ORDER_SCENE',
-  (ctx: any) => {
+  (ctx: {
+    reply?: any,
+    wizard?: {
+      next?: any,
+      state?: {
+        createOrderData?: ORDER_DATA
+      }
+    }
+  }) => {
     console.log('firstStep');
     ctx.wizard.state.createOrderData = {
       type_of_work: null,
@@ -37,8 +56,19 @@ const createOrderDataWizard = new Scenes.WizardScene(
     });
 
   },
-  (ctx: any) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT[ctx.callbackQuery.data]) {
+  (ctx: {
+    reply?: any,
+    scene?: any,
+    message?: any,
+    callbackQuery?: any,
+    wizard?: {
+      next?: any,
+      state?: {
+        createOrderData?: ORDER_DATA
+      }
+    }
+  }) => {
+    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
       ctx.wizard.state.createOrderData.type_of_work = ctx.message.text;
 
       if (ctx.message.text !== 'Курсовая работа') {
@@ -60,8 +90,19 @@ const createOrderDataWizard = new Scenes.WizardScene(
     }
 
   },
-  (ctx: any) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT[ctx.callbackQuery.data]) {
+  (ctx: {
+    reply?: any,
+    scene?: any,
+    message?: any,
+    callbackQuery?: any,
+    wizard?: {
+      next?: any,
+      state?: {
+        createOrderData?: ORDER_DATA
+      }
+    }
+  }) => {
+    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
       ctx.wizard.state.createOrderData.theme = ctx.message.text;
 
       ctx.reply('Выберите предмет из предложенных или введите свой', {
@@ -88,8 +129,19 @@ const createOrderDataWizard = new Scenes.WizardScene(
       return ctx.scene.leave();
     }
   },
-  (ctx: any) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT[ctx.callbackQuery.data]) {
+  (ctx: {
+    reply?: any,
+    scene?: any,
+    message?: any,
+    callbackQuery?: any,
+    wizard?: {
+      next?: any,
+      state?: {
+        createOrderData?: ORDER_DATA
+      }
+    }
+  }) => {
+    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
       ctx.wizard.state.createOrderData.course = ctx.message.text;
 
       ctx.reply('Примерный объем работы', {
@@ -116,8 +168,19 @@ const createOrderDataWizard = new Scenes.WizardScene(
       return ctx.scene.leave();
     }
   },
-  (ctx: any) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT[ctx.callbackQuery.data]) {
+  (ctx: {
+    reply?: any,
+    scene?: any,
+    message?: any,
+    callbackQuery?: any,
+    wizard?: {
+      next?: any,
+      state?: {
+        createOrderData?: ORDER_DATA
+      }
+    }
+  }) => {
+    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
       ctx.wizard.state.createOrderData.pages = ctx.message.text;
       DateCalendar.startNavCalendar(ctx);
       return ctx.wizard.next();
@@ -126,10 +189,20 @@ const createOrderDataWizard = new Scenes.WizardScene(
       return ctx.scene.leave();
     }
   },
-  (ctx: any) => {
+  (ctx: {
+    reply?: any,
+    scene?: any,
+    message?: any,
+    callbackQuery?: any,
+    wizard?: {
+      next?: any,
+      state?: {
+        createOrderData?: ORDER_DATA
+      }
+    }
+  }) => {
     if (ctx.callbackQuery.message.message_id == DateCalendar.chats.get(ctx.callbackQuery.message.chat.id)) {
-      let res: any;
-      res = DateCalendar.clickButtonCalendar(ctx.callbackQuery);
+      const res: any = DateCalendar.clickButtonCalendar(ctx.callbackQuery);
       if (res !== -1) {
         ctx.reply("Вы выбрали: " + res, {
           reply_markup: { remove_keyboard: true },
@@ -141,17 +214,27 @@ const createOrderDataWizard = new Scenes.WizardScene(
         }, 0)
       }
 
-    } else if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT[ctx.callbackQuery.data]) {
+    } else if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
       ctx.reply('Любая информация');
     } else {
       return ctx.scene.leave();
     }
   },
-  (ctx: any) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT[ctx.callbackQuery.data]) {
+  (ctx: {
+    reply?: any,
+    scene?: any,
+    message?: any,
+    callbackQuery?: any,
+    wizard?: {
+      state?: {
+        createOrderData?: ORDER_DATA
+      }
+    }
+  }) => {
+    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
       if (regexEmail.test(ctx.message.text)) {
         ctx.wizard.state.createOrderData.email = ctx.message.text;
-        let orderData = ctx.wizard.state.createOrderData;
+        const orderData = ctx.wizard.state.createOrderData;
         console.log(ctx.wizard.state.createOrderData);
         fetch('https://tgbotstud.free.beeceptor.com/order', {
           method: 'POST',

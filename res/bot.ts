@@ -1,4 +1,6 @@
 
+
+import './instrument';
 import { Scenes, session } from 'telegraf';
 import { helpCommand, startCommand, managerCommand, nextCommand } from './functions/commandFunction';
 import { FROM_TYPES } from './data';
@@ -6,11 +8,12 @@ import BOT from './initBot';
 import createOrderDataWizard from './Scenes/CreateOrderDataScene';
 import orderDataWizard from './Scenes/OrderDataScene';
 
-let activeFrom: any;
+let activeFrom: undefined | string;
 let helpState: number = 1;
 
 if (BOT) {
   BOT.action('/start', (ctx: any) => {
+
     if (
       ctx.message.text.split(' ')[ctx.message.text.split(' ').length - 1] !==
       '/start'
@@ -21,6 +24,7 @@ if (BOT) {
   });
 
   BOT.command('/start', (ctx: any) => {
+    console.log(ctx);
     if (
       ctx.message.text.split(' ')[ctx.message.text.split(' ').length - 1] !==
       '/start'
