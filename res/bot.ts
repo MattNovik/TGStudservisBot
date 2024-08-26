@@ -158,18 +158,6 @@ if (BOT) {
   BOT.action('/state', (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE'));
   BOT.command('/state', (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE'));
 
-  /*   stage.command('/state', (ctx: any) => ctx.scene.leave());
-    stage.action('/state', (ctx: any) => ctx.scene.leave());
-  
-    stage.command('/create', (ctx: any) => ctx.scene.leave());
-    stage.action('/create', (ctx: any) => ctx.scene.leave());
-  
-    stage.command('/start', (ctx: any) => ctx.scene.leave());
-    stage.action('/start', (ctx: any) => ctx.scene.leave());
-  
-    stage.command('/manager', (ctx: any) => ctx.scene.leave());
-    stage.action('/manager', (ctx: any) => ctx.scene.leave()); */
-
   BOT.action('/create', (ctx: any) => {
     console.log('create');
     ctx.scene.enter('CREATE_ORDER_SCENE')
