@@ -1,4 +1,5 @@
 import { regexEmail, getRndInteger } from "../utils";
+import { ACTION_SCENE_OUT } from "../data";
 
 const orderFirstStep = (ctx: any) => {
   ctx.reply('Для авторизации введите ваш email (любой, пока нет авторизации)');
@@ -6,7 +7,7 @@ const orderFirstStep = (ctx: any) => {
 };
 
 const orderSecondStep = (ctx: any) => {
-  if ((ctx && ctx.message && ctx.message.text)) {
+  if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
     if (regexEmail.test(ctx.message.text)) {
       ctx.reply('Введите номер заказа (любые 6 цифр)');
       ctx.wizard.state.orderData = {
@@ -14,19 +15,23 @@ const orderSecondStep = (ctx: any) => {
       };
       return ctx.wizard.next();
     } else {
-      ctx.reply('Неверный email');
+      return ctx.reply('Неверный email');
     }
   } else {
-    ctx.scene.leave();
+    console.log('leave here');
+    ctx.reply('Возврат в начало меню');
+    ctx.reply({ reply_markup: { remove_keyboard: true } });
+    return ctx.scene.leave();
+
   }
 
 };
 
 const orderThirdStep = (ctx: any) => {
-  if ((ctx && ctx.message && ctx.message.text)) {
+  if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
     if (ctx.message.text.length < 6 || isNaN(Number(ctx.message.text))) {
-      ctx.reply('Пожалуйста введине реальный номер заказа');
-      return;
+      return ctx.reply('Пожалуйста введине реальный номер заказа');
+
     }
     ctx.wizard.state.orderData.order_id = ctx.message.text;
     ctx
@@ -52,11 +57,14 @@ const orderThirdStep = (ctx: any) => {
               `Ошибка, попробуйте ещё раз!
             `
             );
+            ctx.reply({ reply_markup: { remove_keyboard: true } });
             return ctx.scene.leave();
           });
       });
   } else {
-    ctx.scene.leave();
+    ctx.reply('Возврат в начало меню');
+    ctx.reply({ reply_markup: { remove_keyboard: true } });
+    return ctx.scene.leave();
   }
 }
 

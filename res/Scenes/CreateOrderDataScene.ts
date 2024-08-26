@@ -41,7 +41,6 @@ const createOrderDataWizard = new Scenes.WizardScene(
     };
 
     makeRequestToCrm('getTypesOfWork', 'POST').then((data: any) => {
-      console.log(data);
       if (data && data.list) {
         TYPES_OF_WORK = data.list;
         ctx.reply('Какой тип работы вам необходим?', {
@@ -68,9 +67,9 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
+    if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.type_of_work = ctx.message.text;
-
+      console.log(ctx?.message?.text);
       if (ctx.message.text !== 'Курсовая работа') {
         ctx.reply('Неверный тип работы (по секрету: для проверки сделали только Курсовые. Лучше выберите их)', {
           reply_markup: {
@@ -85,10 +84,11 @@ const createOrderDataWizard = new Scenes.WizardScene(
         return ctx.wizard.next();
       }
     } else {
-
+      console.log('leave');
+      ctx.reply('Возврат в начало меню');
+      ctx.reply({reply_markup: {remove_keyboard: true}});
       return ctx.scene.leave();
     }
-
   },
   (ctx: {
     reply?: any,
@@ -102,7 +102,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
+    if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.theme = ctx.message.text;
 
       ctx.reply('Выберите предмет из предложенных или введите свой', {
@@ -125,7 +125,8 @@ const createOrderDataWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } else {
-
+      ctx.reply('Возврат в начало меню');
+      ctx.reply({reply_markup: {remove_keyboard: true}});
       return ctx.scene.leave();
     }
   },
@@ -141,7 +142,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
+    if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.course = ctx.message.text;
 
       ctx.reply('Примерный объем работы', {
@@ -164,7 +165,8 @@ const createOrderDataWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } else {
-
+      ctx.reply('Возврат в начало меню');
+      ctx.reply({reply_markup: {remove_keyboard: true}});
       return ctx.scene.leave();
     }
   },
@@ -180,12 +182,13 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
+    if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.pages = ctx.message.text;
       DateCalendar.startNavCalendar(ctx);
       return ctx.wizard.next();
     } else {
-
+      ctx.reply('Возврат в начало меню');
+      ctx.reply({reply_markup: {remove_keyboard: true}});
       return ctx.scene.leave();
     }
   },
@@ -214,9 +217,11 @@ const createOrderDataWizard = new Scenes.WizardScene(
         }, 0)
       }
 
-    } else if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
+    } else if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.reply('Любая информация');
     } else {
+      ctx.reply('Возврат в начало меню');
+      ctx.reply({reply_markup: {remove_keyboard: true}});
       return ctx.scene.leave();
     }
   },
@@ -231,7 +236,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    if ((ctx && ctx.message && ctx.message.text) || ACTION_SCENE_OUT.includes(ctx.callbackQuery.data)) {
+    if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       if (regexEmail.test(ctx.message.text)) {
         ctx.wizard.state.createOrderData.email = ctx.message.text;
         const orderData = ctx.wizard.state.createOrderData;
@@ -250,12 +255,15 @@ const createOrderDataWizard = new Scenes.WizardScene(
           .catch(error => {
             console.error(error);
             ctx.reply('Ошибка заказа!');
+            ctx.reply({reply_markup: {remove_keyboard: true}});
             return ctx.scene.leave();
           });
       } else {
         ctx.reply('Неверный email');
       }
     } else {
+      ctx.reply('Возврат в начало меню');
+      ctx.reply({reply_markup: {remove_keyboard: true}});
       return ctx.scene.leave();
     }
   }

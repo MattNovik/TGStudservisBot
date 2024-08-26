@@ -11,7 +11,9 @@ const FROM_TYPES: {
 const ACTION_SCENE_OUT: Array<string> = [
   '/start',
   '/manager',
-  '/create'
+  '/create',
+  '/state',
+  '/cancel'
 ]
 
 export { FROM_TYPES, ACTION_SCENE_OUT };

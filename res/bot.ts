@@ -12,6 +12,29 @@ let activeFrom: undefined | string;
 let helpState: number = 1;
 
 if (BOT) {
+  BOT.telegram.setMyCommands([
+    {
+      command: 'start',
+      description: 'Начало общения',
+    },
+    {
+      command: 'create',
+      description: 'Создать заказ',
+    },
+    {
+      command: 'state',
+      description: 'Информация по заказу',
+    },
+    {
+      command: 'manager',
+      description: 'Общение с менеджером',
+    },
+    {
+      command: 'cancel',
+      description: 'Выйти из меню',
+    },
+  ]);
+
   BOT.action('/start', (ctx: any) => {
 
     if (
@@ -124,31 +147,19 @@ if (BOT) {
     );
   });
 
-  orderDataWizard.action('/create', (ctx: any) => {
-    if (ctx.scene) {
-      ctx.scene.leave();
-    }
+/*   orderDataWizard.action('/create', (ctx: any) => {
     ctx.scene.enter('ORDER_ID_SCENE');
   });
   createOrderDataWizard.action('/state', (ctx: any) => {
-    if (ctx.scene) {
-      ctx.scene.leave();
-    }
     ctx.scene.enter('CREATE_ORDER_SCENE')
   });
 
   orderDataWizard.command('/create', (ctx: any) => {
-    if (ctx.scene) {
-      ctx.scene.leave();
-    }
     ctx.scene.enter('ORDER_ID_SCENE');
   });
   createOrderDataWizard.command('/state', (ctx: any) => {
-    if (ctx.scene) {
-      ctx.scene.leave();
-    }
     ctx.scene.enter('CREATE_ORDER_SCENE')
-  });
+  }); */
 
   const stage = new Scenes.Stage([orderDataWizard, createOrderDataWizard]);
 
@@ -167,7 +178,6 @@ if (BOT) {
     console.log('create');
     ctx.scene.enter('CREATE_ORDER_SCENE')
   });
-
   BOT.launch();
 
   console.log('start app v.09');
