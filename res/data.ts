@@ -14,6 +14,29 @@ const ACTION_SCENE_OUT: Array<string> = [
   '/create',
   '/state',
   '/cancel'
+];
+
+const BOT_COMMANDS: Array<{ command: string, description: string }> = [
+  {
+    command: 'start',
+    description: 'Начало общения',
+  },
+  {
+    command: 'create',
+    description: 'Создать заказ',
+  },
+  {
+    command: 'state',
+    description: 'Информация по заказу',
+  },
+  {
+    command: 'manager',
+    description: 'Общение с менеджером',
+  },
+  {
+    command: 'cancel',
+    description: 'Выйти из меню',
+  },
 ]
 
-export { FROM_TYPES, ACTION_SCENE_OUT };
+export { FROM_TYPES, ACTION_SCENE_OUT, BOT_COMMANDS };
