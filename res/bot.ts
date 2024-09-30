@@ -1,18 +1,19 @@
 import './instrument';
 import { Scenes, session } from 'telegraf';
-import { helpCommand, startCommand, managerCommand, nextCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand, downloadWorkCommand, authorCommand, correctionsCommand, enterOrderScene, enterCreateOrderScene } from './functions/commandFunction';
+import { helpCommand, startCommand, managerCommand, nextCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand, downloadWorkCommand, authorCommand, correctionsCommand, stateOrderInfo, enterCreateOrderScene } from './functions/commandFunction';
 import { BOT_COMMANDS } from './data';
 import BOT from './initBot';
 import createOrderDataWizard from './Scenes/CreateOrderDataScene';
 import orderDataWizard from './Scenes/OrderDataScene';
+import { requestContact } from './functions/requestContacts';
 
 let helpState: number = 1;
 
 if (BOT) {
-  BOT.command('ping', ctx => {
+  BOT.command('ping', (ctx: any) => {
     ctx.reply('Pong!')
   });
-  
+
   BOT.telegram.setMyCommands(BOT_COMMANDS);
 
   BOT.action('start', startCommand);
@@ -51,11 +52,14 @@ if (BOT) {
   BOT.use(session()); // to  be precise, session is not a must have for Scenes to work, but it sure is lonely without one
   BOT.use(stage.middleware());
 
-  BOT.action('state', enterOrderScene);
-  BOT.command('state', enterOrderScene);
+  BOT.action('state', stateOrderInfo);
+  BOT.command('state', stateOrderInfo);
 
   BOT.action('create', enterCreateOrderScene);
   BOT.command('create', enterCreateOrderScene);
+
+  BOT.action('contact', requestContact);
+  BOT.command('contact', requestContact);
 
   BOT.launch();
 

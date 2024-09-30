@@ -25,7 +25,13 @@ const payCommand = (ctx: any) => {
 
 const managerCommand = (ctx: any) => {
   ctx.reply(
-    `Здесь мы решаем, что отдавать на этот запрос:\n - Либо ссылку на ТГ Бота - Тех. поддержки \n - Либо переводим в иное место`
+    'Для связи с менеджером перейдите:', {
+    reply_markup: {
+      inline_keyboard: [
+        [{ text: 'Поддержка', url: process.env.SUPPORT_BOT_URL }],
+      ],
+    }
+  }
   );
 };
 
@@ -68,6 +74,7 @@ const nextCommand = (ctx: any, helpState: number) => {
 }
 
 const startCommand = (ctx: any) => {
+  console.log(ctx.message);
   ctx.reply(
     `Здравствуйте ${ctx.message.from.username}, меня зовут Студень. Это бот компании Студсервис. Здесь вы можете:`,
     {
@@ -81,6 +88,8 @@ const startCommand = (ctx: any) => {
             },
           ],
           [{ text: 'Cвязаться с менеджером', callback_data: 'manager' }],
+          [{ text: 'Get Contacts', callback_data: 'contact' }],
+          [{ text: 'Check Phone', callback_data: 'phone' }],
         ],
       },
     }
@@ -145,4 +154,12 @@ const enterCreateOrderScene = (ctx: any) => {
 
 const enterOrderScene = (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE');
 
-export { enterCreateOrderScene, enterOrderScene, correctionsCommand, authorCommand, downloadWorkCommand, helpCommand, managerCommand, nextCommand, startCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand };
+const stateOrderInfo = (ctx: any) => ctx.reply('Информацию по вашему заказу вы можете получить в личном кабинете по адресу https://studservis-lk или на вашей почте(которую указывали при создании заказа)', {
+  reply_markup: {
+    inline_keyboard: [
+      [{ text: 'Личный Кабинет', url: process.env.LK_URL }],
+    ],
+  },
+})
+
+export { stateOrderInfo, enterCreateOrderScene, enterOrderScene, correctionsCommand, authorCommand, downloadWorkCommand, helpCommand, managerCommand, nextCommand, startCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand };

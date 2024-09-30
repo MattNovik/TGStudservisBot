@@ -16,11 +16,15 @@ interface ORDER_DATA {
 }
 
 let TYPES_OF_WORK: any = [];
+let USER_FIRST_NAME = null;
+let USER_LAST_NAME = null;
+let USER_USERNAME = null;
 
 const createOrderDataWizard = new Scenes.WizardScene(
   'CREATE_ORDER_SCENE',
   (ctx: {
     reply?: any,
+    update?: any,
     wizard?: {
       next?: any,
       state?: {
@@ -28,15 +32,21 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    console.log('firstStep');
-    /* console.log(ctx); */
+    console.log(ctx?.update?.message?.from);
+    // Сохраняю имея пользователя в контексте создания заказа для дальнейшего использования
+    USER_FIRST_NAME = ctx?.update?.message?.from?.first_name;
+    USER_LAST_NAME = ctx?.update?.message?.from?.last_name;
+    USER_USERNAME = ctx?.update?.message?.from?.username;
+
+    /* console.log('firstStep'); */
+
     ctx.wizard.state.createOrderData = {
       type_of_work: null,
       theme: null,
       course: null,
       email: null,
       phone: null,
-      name: null,
+      name: USER_FIRST_NAME && USER_LAST_NAME ? USER_FIRST_NAME + ' ' + USER_LAST_NAME : USER_USERNAME,
       pages: null,
       date: null
     };
@@ -44,6 +54,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
     makeRequestToCrm('getTypesOfWork', 'POST').then((data: any) => {
       if (data && data.list) {
         TYPES_OF_WORK = data.list;
+        ctx.reply('Создаём заказ....');
         ctx.reply('Какой тип работы вам необходим?', {
           reply_markup: {
             one_time_keyboard: true,
