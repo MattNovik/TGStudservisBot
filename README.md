@@ -1,11 +1,14 @@
-# weather-telegram-bot
+Что есть?
+1) Сборка + docker (есть вопросы с запуском на локальной машине - постоянно крашит WSL)
+2) Отслеживать жизнь приложения можно через pm2 (pm2.io)
+3) Sentry добавил, но нужен проект для подключения 
+4) Докинул линтеры eslint + prettier
 
-Simple Telegram bot, that shows the weather by your geolocation
+Что под вопросом?
+1) Тесты
+2) Проверка совместимости
+3) Проверка запуска 
 
-How to start:
-- clone it
-- run ``npm i``
-- add ur apikey and token to ``.env-example``
-- rename ``.env-example`` to ``.env``
-- run ``npm start``
-- enjoy!
+Задачи:
+1) Тесты для приложения - JEST+MOCHA  + https://github.com/jehy/telegram-test-api
+2) Проверка работоспособности
