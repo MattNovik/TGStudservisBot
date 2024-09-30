@@ -18,9 +18,8 @@ const orderSecondStep = (ctx: any) => {
       return ctx.reply('Неверный email');
     }
   } else {
-    console.log('leave here');
-    ctx.reply('Возврат в начало меню');
-    ctx.reply({ reply_markup: { remove_keyboard: true } });
+    /* console.log('leave here'); */
+    ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
     return ctx.scene.leave();
 
   }
@@ -43,8 +42,8 @@ const orderThirdStep = (ctx: any) => {
           .then((response: any) => response.json())
           .then((data: any) => {
             const result = data.orders[getRndInteger(0, data.orders.length - 1)];
-            console.log(JSON.stringify(data));
-            console.log(result)
+            /* console.log(JSON.stringify(data));
+            console.log(result) */
             ctx.reply(
               `Статус заказа - ${result.status};\nСтоимость заказа - ${result.summ} руб.;\nОписание - ${result.description};
             `
@@ -62,8 +61,7 @@ const orderThirdStep = (ctx: any) => {
           });
       });
   } else {
-    ctx.reply('Возврат в начало меню');
-    ctx.reply({ reply_markup: { remove_keyboard: true } });
+    ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
     return ctx.scene.leave();
   }
 }

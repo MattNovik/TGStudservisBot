@@ -29,7 +29,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
     }
   }) => {
     console.log('firstStep');
-    console.log(ctx);
+    /* console.log(ctx); */
     ctx.wizard.state.createOrderData = {
       type_of_work: null,
       theme: null,
@@ -70,15 +70,14 @@ const createOrderDataWizard = new Scenes.WizardScene(
   }) => {
     if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.type_of_work = ctx.message.text;
-      console.log(ctx?.message?.text);
+      /* console.log(ctx?.message?.text); */
       ctx.reply('Введите тему работу', {
         reply_markup: { remove_keyboard: true },
       });
       return ctx.wizard.next();
     } else {
       console.log('leave');
-      ctx.reply('Возврат в начало меню');
-      ctx.reply({ reply_markup: { remove_keyboard: true } });
+      ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -233,8 +232,8 @@ const createOrderDataWizard = new Scenes.WizardScene(
         ctx.wizard.state.createOrderData.email = ctx.message.text;
         const orderData: any = ctx.wizard.state.createOrderData;
         orderData.email = ctx.message.text;
-        console.log(orderData)
-        console.log(ctx.wizard.state.createOrderData);
+        /* console.log(orderData)
+        console.log(ctx.wizard.state.createOrderData); */
         const formData = new FormData();
         for (var key in orderData) {
           formData.append(key, orderData[key]);
@@ -246,7 +245,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
         })
           .then((response: any) => response.text())
           .then(data => {
-            console.log(data);
+            /* console.log(data); */
             ctx.reply('Отлично ваш заказ создан, скоро с вами свяжется наш менедеджер');
             ctx.reply(`Информация по вашему заказу:\nСроки - ${orderData.date}\nКол-во страниц - ${orderData.pages}\nТема работы - ${orderData.theme}\nТип работы - ${orderData.type_of_work}\nПредмет - ${orderData.course}`);
             return ctx.scene.leave();
