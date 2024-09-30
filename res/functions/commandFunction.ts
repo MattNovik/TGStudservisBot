@@ -25,7 +25,7 @@ const payCommand = (ctx: any) => {
 
 const managerCommand = (ctx: any) => {
   ctx.reply(
-    `Для связи с менеджером передейте по ссылке повторите ваш вопрос.\nДва варианта: или даем ссылку на менеджера или отправляем запрос в нашу CRM и позволяем общаться с менеджером через ТГ.\nНо эта задача ложнее`
+    `Здесь мы решаем, что отдавать на этот запрос:\n - Либо ссылку на ТГ Бота - Тех. поддержки \n - Либо переводим в иное место`
   );
 };
 
@@ -73,14 +73,14 @@ const startCommand = (ctx: any) => {
     {
       reply_markup: {
         inline_keyboard: [
-          [{ text: 'Узнать статус вашего заказа', callback_data: '/state' }],
+          [{ text: 'Узнать статус вашего заказа', callback_data: 'state' }],
           [
             {
               text: 'Создать заказ',
-              callback_data: '/create',
+              callback_data: 'create',
             },
           ],
-          [{ text: 'Cвязаться с менеджером', callback_data: '/manager' }],
+          [{ text: 'Cвязаться с менеджером', callback_data: 'manager' }],
         ],
       },
     }

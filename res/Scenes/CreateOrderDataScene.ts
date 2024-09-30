@@ -29,6 +29,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
     }
   }) => {
     console.log('firstStep');
+    console.log(ctx);
     ctx.wizard.state.createOrderData = {
       type_of_work: null,
       theme: null,
@@ -70,23 +71,14 @@ const createOrderDataWizard = new Scenes.WizardScene(
     if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.type_of_work = ctx.message.text;
       console.log(ctx?.message?.text);
-      if (ctx.message.text !== 'Курсовая работа') {
-        ctx.reply('Неверный тип работы (по секрету: для проверки сделали только Курсовые. Лучше выберите их)', {
-          reply_markup: {
-            one_time_keyboard: true,
-            keyboard: TYPES_OF_WORK.map((item: any) => [{ text: item.name }]),
-          },
-        });
-      } else {
-        ctx.reply('Введите тему работу', {
-          reply_markup: { remove_keyboard: true },
-        });
-        return ctx.wizard.next();
-      }
+      ctx.reply('Введите тему работу', {
+        reply_markup: { remove_keyboard: true },
+      });
+      return ctx.wizard.next();
     } else {
       console.log('leave');
       ctx.reply('Возврат в начало меню');
-      ctx.reply({reply_markup: {remove_keyboard: true}});
+      ctx.reply({ reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -115,7 +107,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
               { text: 'Химия' },
             ],
             [
-              { text: 'НАУЧПОП' },
+              { text: 'Наука' },
               { text: 'Инженер' },
               { text: 'География' }
             ],
@@ -126,7 +118,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       return ctx.wizard.next();
     } else {
       ctx.reply('Возврат в начало меню');
-      ctx.reply({reply_markup: {remove_keyboard: true}});
+      ctx.reply({ reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -166,7 +158,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       return ctx.wizard.next();
     } else {
       ctx.reply('Возврат в начало меню');
-      ctx.reply({reply_markup: {remove_keyboard: true}});
+      ctx.reply({ reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -188,7 +180,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       return ctx.wizard.next();
     } else {
       ctx.reply('Возврат в начало меню');
-      ctx.reply({reply_markup: {remove_keyboard: true}});
+      ctx.reply({ reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -221,7 +213,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       ctx.reply('Любая информация');
     } else {
       ctx.reply('Возврат в начало меню');
-      ctx.reply({reply_markup: {remove_keyboard: true}});
+      ctx.reply({ reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -239,23 +231,30 @@ const createOrderDataWizard = new Scenes.WizardScene(
     if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       if (regexEmail.test(ctx.message.text)) {
         ctx.wizard.state.createOrderData.email = ctx.message.text;
-        const orderData = ctx.wizard.state.createOrderData;
+        const orderData: any = ctx.wizard.state.createOrderData;
+        orderData.email = ctx.message.text;
+        console.log(orderData)
         console.log(ctx.wizard.state.createOrderData);
-        fetch('https://tgbotstud.free.beeceptor.com/order', {
+        const formData = new FormData();
+        for (var key in orderData) {
+          formData.append(key, orderData[key]);
+        }
+
+        fetch('https://wizard.studcrm.ru/api/createOrderFull/', {
           method: 'POST',
-          body: JSON.stringify(orderData)
+          body: formData
         })
           .then((response: any) => response.text())
           .then(data => {
             console.log(data);
-            ctx.reply('Отлично ваш заказ НЕ создан, но скоро с вами свяжутся');
+            ctx.reply('Отлично ваш заказ создан, скоро с вами свяжется наш менедеджер');
             ctx.reply(`Информация по вашему заказу:\nСроки - ${orderData.date}\nКол-во страниц - ${orderData.pages}\nТема работы - ${orderData.theme}\nТип работы - ${orderData.type_of_work}\nПредмет - ${orderData.course}`);
             return ctx.scene.leave();
           })
           .catch(error => {
             console.error(error);
             ctx.reply('Ошибка заказа!');
-            ctx.reply({reply_markup: {remove_keyboard: true}});
+            ctx.reply({ reply_markup: { remove_keyboard: true } });
             return ctx.scene.leave();
           });
       } else {
@@ -263,7 +262,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     } else {
       ctx.reply('Возврат в начало меню');
-      ctx.reply({reply_markup: {remove_keyboard: true}});
+      ctx.reply({ reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   }
