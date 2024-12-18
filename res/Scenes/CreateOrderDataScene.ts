@@ -3,6 +3,7 @@ import { makeRequestToCrm } from "../api";
 import { ACTION_SCENE_OUT } from "../data";
 import { regexEmail } from "../utils";
 import DateCalendar from "../calendar";
+import { secondMakeRequestToCrm } from "../api";
 
 interface ORDER_DATA {
   type_of_work: null | string | number,
@@ -11,8 +12,10 @@ interface ORDER_DATA {
   email: null | string,
   phone: null | string | number,
   name: null | string,
-  pages: null | string | number,
-  date: null | string | number | Date
+  pages_count: null | string | number,
+  date: null | string | number | Date,
+  telegram_id: null | string | number,
+  office_id: null | string | number,
 }
 
 let TYPES_OF_WORK: any = [];
@@ -21,24 +24,28 @@ const createOrderDataWizard = new Scenes.WizardScene(
   'CREATE_ORDER_SCENE',
   (ctx: {
     reply?: any,
+    update: any,
     wizard?: {
       next?: any,
       state?: {
+        userId?: any,
         createOrderData?: ORDER_DATA
       }
     }
   }) => {
     console.log('firstStep');
-    console.log(ctx);
+    ctx.wizard.state.userId = ctx?.update?.message?.from?.id;
     ctx.wizard.state.createOrderData = {
       type_of_work: null,
       theme: null,
       course: null,
       email: null,
-      phone: null,
-      name: null,
-      pages: null,
-      date: null
+      phone: 8910022730,
+      name: ctx?.update?.message?.from?.username,
+      pages_count: null,
+      date: null,
+      telegram_id: ctx?.update?.message?.from?.id,
+      office_id: 2
     };
 
     makeRequestToCrm('getTypesOfWork', 'POST').then((data: any) => {
@@ -68,6 +75,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
+    console.log(ctx);
     if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.type_of_work = ctx.message.text;
       console.log(ctx?.message?.text);
@@ -175,7 +183,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
     }
   }) => {
     if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
-      ctx.wizard.state.createOrderData.pages = ctx.message.text;
+      ctx.wizard.state.createOrderData.pages_count = ctx.message.text;
       DateCalendar.startNavCalendar(ctx);
       return ctx.wizard.next();
     } else {
@@ -196,7 +204,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    if (ctx.callbackQuery.message.message_id == DateCalendar.chats.get(ctx.callbackQuery.message.chat.id)) {
+    if (ctx?.callbackQuery?.message?.message_id == DateCalendar.chats.get(ctx?.callbackQuery?.message?.chat?.id)) {
       const res: any = DateCalendar.clickButtonCalendar(ctx.callbackQuery);
       if (res !== -1) {
         ctx.reply("Вы выбрали: " + res, {
@@ -224,6 +232,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
     callbackQuery?: any,
     wizard?: {
       state?: {
+        userId?: any,
         createOrderData?: ORDER_DATA
       }
     }
@@ -233,25 +242,24 @@ const createOrderDataWizard = new Scenes.WizardScene(
         ctx.wizard.state.createOrderData.email = ctx.message.text;
         const orderData: any = ctx.wizard.state.createOrderData;
         orderData.email = ctx.message.text;
-        console.log(orderData)
-        console.log(ctx.wizard.state.createOrderData);
+
         const formData = new FormData();
         for (var key in orderData) {
           formData.append(key, orderData[key]);
         }
 
-        fetch('https://wizard.studcrm.ru/api/createOrderFull/', {
-          method: 'POST',
-          body: formData
+        //ВРЕМЕННЫЙ ФИКС ДАТЫ 
+
+        orderData.date = Date.now();
+        orderData.type_of_work = 10;
+        console.log(orderData)
+        secondMakeRequestToCrm('api/telegram/bot/createOrder', 'POST', orderData, 'text').then((data: any) => {
+          console.log(data);
+          ctx.reply('Отлично ваш заказ создан, скоро с вами свяжется наш менедеджер');
+          ctx.reply(`Информация по вашему заказу:\nСроки - ${orderData.date}\nКол-во страниц - ${orderData.pages_count}\nТема работы - ${orderData.theme}\nТип работы - ${orderData.type_of_work}\nПредмет - ${orderData.course}`);
+          return ctx.scene.leave();
         })
-          .then((response: any) => response.text())
-          .then(data => {
-            console.log(data);
-            ctx.reply('Отлично ваш заказ создан, скоро с вами свяжется наш менедеджер');
-            ctx.reply(`Информация по вашему заказу:\nСроки - ${orderData.date}\nКол-во страниц - ${orderData.pages}\nТема работы - ${orderData.theme}\nТип работы - ${orderData.type_of_work}\nПредмет - ${orderData.course}`);
-            return ctx.scene.leave();
-          })
-          .catch(error => {
+          .catch((error: any) => {
             console.error(error);
             ctx.reply('Ошибка заказа!');
             ctx.reply({ reply_markup: { remove_keyboard: true } });

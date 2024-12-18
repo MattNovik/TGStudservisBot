@@ -1,6 +1,6 @@
 import './instrument';
 import { Scenes, session } from 'telegraf';
-import { helpCommand, startCommand, managerCommand, nextCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand, downloadWorkCommand, authorCommand, correctionsCommand, enterOrderScene, enterCreateOrderScene } from './functions/commandFunction';
+import { checkorderInfoRequest, checkCreateOrderRequest, checkRequest, helpCommand, startCommand, managerCommand, nextCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand, downloadWorkCommand, authorCommand, correctionsCommand, enterOrderScene, enterCreateOrderScene } from './functions/commandFunction';
 import { BOT_COMMANDS } from './data';
 import BOT from './initBot';
 import createOrderDataWizard from './Scenes/CreateOrderDataScene';
@@ -12,7 +12,7 @@ if (BOT) {
   BOT.command('ping', ctx => {
     ctx.reply('Pong!')
   });
-  
+
   BOT.telegram.setMyCommands(BOT_COMMANDS);
 
   BOT.action('start', startCommand);
@@ -30,6 +30,16 @@ if (BOT) {
 
   BOT.command('manager', managerCommand);
   BOT.action('manager', managerCommand);
+
+
+  BOT.command('checkRequest', checkRequest);
+  BOT.action('checkRequest', checkRequest);
+
+  BOT.command('checkCreateOrderRequest', checkCreateOrderRequest);
+  BOT.action('checkCreateOrderRequest', checkCreateOrderRequest);
+
+  BOT.command('checkorderInfoRequest', checkorderInfoRequest);
+  BOT.action('checkorderInfoRequest', checkorderInfoRequest);
 
   BOT.action('next', (ctx: any) => {
     nextCommand(ctx, helpState);

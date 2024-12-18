@@ -1,3 +1,6 @@
+import { callback } from "telegraf/typings/button";
+import { secondMakeRequestToCrm } from "../api";
+
 const helpCommand = (ctx: any) => {
   ctx.reply('Какой вопрос вас интересует?', {
     reply_markup: {
@@ -16,6 +19,24 @@ const helpCommand = (ctx: any) => {
     },
   });
 };
+
+const checkRequest = (ctx: any) => {
+  const userId = ctx?.update?.callback_query?.from?.id;
+  const data = { "name": "MattNovik", "email": "matvej.novik@gmail.com", "telegram_id": userId, "phone": "+71112223321" };
+  secondMakeRequestToCrm('api/telegram/bot/saveUserData', 'POST', data, 'text').then((data: any) => console.log(data));
+}
+
+const checkCreateOrderRequest = (ctx: any) => {
+  const userId = ctx?.update?.callback_query?.from?.id;
+  const data = { "name": "MattNovik", "email": "matvej.novik@gmail.com", "telegram_id": userId, "phone": "+71112223321", "type_of_work": 1, "theme": "Theme test", "course": 1, "office_id": 2, "pages_count": "100", "date": 1734509315 };
+  secondMakeRequestToCrm('api/telegram/bot/createOrder', 'POST', data, 'text').then((data: any) => console.log(data));
+}
+
+const checkorderInfoRequest = (ctx: any) => {
+  const userId = ctx?.update?.callback_query?.from?.id;
+  const data = { "telegram_id": userId };
+  secondMakeRequestToCrm('api/telegram/bot/getOrderInfo', 'POST', data, 'text').then((data: any) => console.log(data));
+}
 
 const payCommand = (ctx: any) => {
   ctx.reply(
@@ -80,6 +101,18 @@ const startCommand = (ctx: any) => {
               callback_data: 'create',
             },
           ],
+          [{
+            text: 'Проверить запрос',
+            callback_data: 'checkRequest',
+          },],
+          [{
+            text: 'Проверить запрос создание заказа',
+            callback_data: 'checkCreateOrderRequest',
+          },],
+          [{
+            text: 'Проверить запрос инфо заказа',
+            callback_data: 'checkorderInfoRequest',
+          },],
           [{ text: 'Cвязаться с менеджером', callback_data: 'manager' }],
         ],
       },
@@ -145,4 +178,4 @@ const enterCreateOrderScene = (ctx: any) => {
 
 const enterOrderScene = (ctx: any) => ctx.scene.enter('ORDER_ID_SCENE');
 
-export { enterCreateOrderScene, enterOrderScene, correctionsCommand, authorCommand, downloadWorkCommand, helpCommand, managerCommand, nextCommand, startCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand };
+export { checkorderInfoRequest, checkCreateOrderRequest, enterCreateOrderScene, enterOrderScene, correctionsCommand, authorCommand, downloadWorkCommand, helpCommand, managerCommand, nextCommand, startCommand, payCommand, docCommand, reviewCommand, downloadCommand, garantyCommand, expensiveCommand, checkRequest };

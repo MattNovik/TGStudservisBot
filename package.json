@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint res/**/*.ts",
     "format": "eslint res/**/*.ts --fix",
-    "build": "rimraf ./dist && babel --extensions .ts,.tsx res --out-dir dist && npm run sentry:sourcemaps",
+    "build": "rimraf ./dist && babel --extensions .ts,.tsx res --out-dir dist",
     "dev": "tsnd --respawn res/bot.ts",
     "start:prod": "npm run build && pm2-runtime ecosystem.config.cjs",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org studservis --project tg-bot-creator ./ && sentry-cli sourcemaps upload --org studservis --project tg-bot-creator ./"
