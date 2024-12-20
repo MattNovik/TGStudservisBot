@@ -5,8 +5,11 @@ import { BOT_COMMANDS } from './data';
 import BOT from './initBot';
 import createOrderDataWizard from './Scenes/CreateOrderDataScene';
 import orderDataWizard from './Scenes/OrderDataScene';
+import express from "express";
 
 let helpState: number = 1;
+const app = express();
+const port = 3080;
 
 if (BOT) {
   BOT.command('ping', ctx => {
@@ -38,8 +41,8 @@ if (BOT) {
   BOT.command('checkCreateOrderRequest', checkCreateOrderRequest);
   BOT.action('checkCreateOrderRequest', checkCreateOrderRequest);
 
-  BOT.command('checkorderInfoRequest', checkorderInfoRequest);
-  BOT.action('checkorderInfoRequest', checkorderInfoRequest);
+  BOT.command('checkorderInfoRequest', (ctx) => checkorderInfoRequest(ctx, { telegram_id: null, order_id: 1 }));
+  BOT.action('checkorderInfoRequest', (ctx) => checkorderInfoRequest(ctx, { telegram_id: null, order_id: 1 }));
 
   BOT.action('next', (ctx: any) => {
     nextCommand(ctx, helpState);
@@ -73,3 +76,8 @@ if (BOT) {
 } else {
   console.log('no bot intered');
 }
+
+app.get("/health", (req: any, res: any) => res.send({ status: "ok" }));
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})

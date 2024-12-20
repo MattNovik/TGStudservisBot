@@ -1,7 +1,7 @@
 import { Scenes } from "telegraf";
 import { makeRequestToCrm } from "../api";
 import { ACTION_SCENE_OUT } from "../data";
-import { regexEmail } from "../utils";
+import { rebuildDate, regexEmail } from "../utils";
 import DateCalendar from "../calendar";
 import { secondMakeRequestToCrm } from "../api";
 
@@ -75,10 +75,8 @@ const createOrderDataWizard = new Scenes.WizardScene(
       }
     }
   }) => {
-    console.log(ctx);
     if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.wizard.state.createOrderData.type_of_work = ctx.message.text;
-      /* console.log(ctx?.message?.text); */
       ctx.reply('Введите тему работу', {
         reply_markup: { remove_keyboard: true },
       });
@@ -124,8 +122,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } else {
-      ctx.reply('Возврат в начало меню');
-      ctx.reply({ reply_markup: { remove_keyboard: true } });
+      ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -164,8 +161,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
 
       return ctx.wizard.next();
     } else {
-      ctx.reply('Возврат в начало меню');
-      ctx.reply({ reply_markup: { remove_keyboard: true } });
+      ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -186,8 +182,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
       DateCalendar.startNavCalendar(ctx);
       return ctx.wizard.next();
     } else {
-      ctx.reply('Возврат в начало меню');
-      ctx.reply({ reply_markup: { remove_keyboard: true } });
+      ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -209,7 +204,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
         ctx.reply("Вы выбрали: " + res, {
           reply_markup: { remove_keyboard: true },
         });
-        ctx.wizard.state.createOrderData.date = res;
+        ctx.wizard.state.createOrderData.date = rebuildDate(res);
         setTimeout(() => {
           ctx.reply('Укажите email на который неуобходимо будет отправить работу');
           return ctx.wizard.next();
@@ -219,8 +214,7 @@ const createOrderDataWizard = new Scenes.WizardScene(
     } else if (ctx && ctx.message && ctx.message.text && !ACTION_SCENE_OUT.includes(ctx?.message?.text)) {
       ctx.reply('Любая информация');
     } else {
-      ctx.reply('Возврат в начало меню');
-      ctx.reply({ reply_markup: { remove_keyboard: true } });
+      ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   },
@@ -261,16 +255,14 @@ const createOrderDataWizard = new Scenes.WizardScene(
         })
           .catch((error: any) => {
             console.error(error);
-            ctx.reply('Ошибка заказа!');
-            ctx.reply({ reply_markup: { remove_keyboard: true } });
+            ctx.reply('Ошибка заказа!', { reply_markup: { remove_keyboard: true } });
             return ctx.scene.leave();
           });
       } else {
         ctx.reply('Неверный email');
       }
     } else {
-      ctx.reply('Возврат в начало меню');
-      ctx.reply({ reply_markup: { remove_keyboard: true } });
+      ctx.reply('Возврат в начало меню', { reply_markup: { remove_keyboard: true } });
       return ctx.scene.leave();
     }
   }

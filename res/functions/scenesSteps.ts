@@ -54,9 +54,8 @@ const orderThirdStep = (ctx: any) => {
             console.log(error)
             ctx.reply(
               `Ошибка, попробуйте ещё раз!
-            `
+            `, { reply_markup: { remove_keyboard: true } }
             );
-            ctx.reply({ reply_markup: { remove_keyboard: true } });
             return ctx.scene.leave();
           });
       });

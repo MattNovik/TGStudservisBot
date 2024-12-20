@@ -22,20 +22,20 @@ const helpCommand = (ctx: any) => {
 
 const checkRequest = (ctx: any) => {
   const userId = ctx?.update?.callback_query?.from?.id;
-  const data = { "name": "MattNovik", "email": "matvej.novik@gmail.com", "telegram_id": userId, "phone": "+71112223321" };
+  const data = { "name": "MattNovik", "email": "syu09@bk.ru", "telegram_id": 3456363, "phone": "+71112223321" };
   secondMakeRequestToCrm('api/telegram/bot/saveUserData', 'POST', data, 'text').then((data: any) => console.log(data));
 }
 
-const checkCreateOrderRequest = (ctx: any) => {
+const checkCreateOrderRequest = (ctx: any, data: any) => {
   const userId = ctx?.update?.callback_query?.from?.id;
-  const data = { "name": "MattNovik", "email": "matvej.novik@gmail.com", "telegram_id": userId, "phone": "+71112223321", "type_of_work": 1, "theme": "Theme test", "course": 1, "office_id": 2, "pages_count": "100", "date": 1734509315 };
-  secondMakeRequestToCrm('api/telegram/bot/createOrder', 'POST', data, 'text').then((data: any) => console.log(data));
+  const dataToSend = { "name": "MattNovik", "email": "matvej.novik356234@gmail.com", "telegram_id": 532634623, "phone": "+71112223321", "type_of_work": 1, "theme": "Theme test", "course": 1, "office_id": 2, "pages_count": "100", "date": 1734509315 };
+  secondMakeRequestToCrm('api/telegram/bot/createOrder', 'POST', dataToSend, 'text').then((data: any) => console.log(data));
 }
 
-const checkorderInfoRequest = (ctx: any) => {
+const checkorderInfoRequest = (ctx: any, data: { "telegram_id": null | string | number, "order_id": number }) => {
   const userId = ctx?.update?.callback_query?.from?.id;
-  const data = { "telegram_id": userId };
-  secondMakeRequestToCrm('api/telegram/bot/getOrderInfo', 'POST', data, 'text').then((data: any) => console.log(data));
+  const dataToSend = { "telegram_id": 532634623, "order_id": 492295 };
+  secondMakeRequestToCrm('api/telegram/bot/getOrderInfo', 'POST', dataToSend, 'text').then((data: any) => console.log(data));
 }
 
 const payCommand = (ctx: any) => {
